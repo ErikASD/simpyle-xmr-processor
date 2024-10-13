@@ -122,7 +122,7 @@ class Transaction(Base):
     block_height = Column(Integer, index=True)
     credited = Column(Boolean, default=False, index=True)
     time_created = Column(Integer, default=get_current_time)
-
+    ### DEPRECATED ### Bulk insert faster
     def create_or_update(db, address_index, amount, tx_hash, block_height, unlocked):
         if not unlocked:
             db_transaction = Transaction.exists(db, tx_hash)
@@ -144,6 +144,7 @@ class Transaction(Base):
         )
         db.add(db_transaction)
         return None
+    ### DEPRECATED ###
 
     def bulk_insert(db, transactions):
         for transaction in transactions:
