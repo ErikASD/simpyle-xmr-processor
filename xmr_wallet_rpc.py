@@ -41,6 +41,5 @@ class XMRWalletRPC:
 	def relay_tx(self, tx_metadata):
 		transfer = self.send("relay_tx",{"hex":tx_metadata})
 		if not "result" in transfer:
-			print(transfer)
 			return None
 		return transfer["result"]
