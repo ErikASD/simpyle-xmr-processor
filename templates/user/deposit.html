@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Deposit</title>
+	{% include "components/styles.html"%}
+	{% include "components/svgs.html"%}
+</head>
+<body>
+{% include "components/user-nav.html"%}
+<main>
+	<xmr-address-area>
+		<xmr-address>{{user.xmr_address}}</xmr-address>
+		<xmr-address-qr-bg>
+			<i-xmr-address-bg>
+				<i-xmr-address>
+				<svg height="16px" width="16px"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-xmr"></use></svg>
+				</i-xmr-address>
+			</i-xmr-address-bg>
+			<xmr-address-qr>{{deposit.get_qr_svg(user.xmr_address)|safe}}</xmr-address-qr>
+		</xmr-address-qr-bg>
+	</xmr-address-area>
+</main>
+</body>
+</html>

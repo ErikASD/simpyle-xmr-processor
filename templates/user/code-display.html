@@ -1,0 +1,74 @@
+<style>
+	html {
+		height: 100%;
+	}
+	body {
+		margin: 0;
+		padding: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background: rgb(20, 20, 20);
+		flex-direction: column;
+		height: 100%;
+	}
+	#enc-code-message {
+		resize: none;
+		border: none;
+		outline: none;
+		height: 300px;
+		width: 500px;
+	    text-align: center;
+	    user-select: auto;
+	    color: rgba(255, 255, 255, 0.5);
+	    background: rgba(0, 0, 0, 0);
+	}
+	#code_input{
+	    color: rgba(255, 255, 255, 0.5);
+	    background: rgba(0, 0, 0, 0);
+	    border: 1px solid rgba(255, 255, 255, 0.3);
+	    outline: none;
+	    border-radius: 5px;
+	    resize: none;
+	    height: 100px;
+	    width: 300px;
+	    margin: 5px;
+	    padding: 5px;
+	    text-align: center;
+	}
+	form {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+	}
+	input {
+	    color: rgba(255, 255, 255, 0.5);
+	    background: rgba(0, 0, 0, 0);
+	    border: 1px solid rgba(255, 255, 255, 0.3);
+	    margin: 5px;
+	    padding: 5px;
+	    border-radius: 5px;
+	    cursor: pointer;
+	}
+	::-webkit-scrollbar {
+	  width: 10px;
+	}
+	::-webkit-scrollbar-track {
+	  background: rgba(0, 0, 0, 0.5);
+	  border-radius: 5px;
+	}
+	::-webkit-scrollbar-thumb {
+	  background: rgba(50, 50, 50, 0.5);
+	  border-radius: 5px;
+	}
+	::-webkit-scrollbar-thumb:hover {
+	  background: rgba(50, 50, 50, 0.3);
+	}
+</style>
+<form action="/user/login/verify" method="post">
+	<textarea id="enc-code-message" readonly>{{message.decode()}}</textarea>
+	<textarea id="code_input" name="code" placeholder="Decrypted Verification Code"></textarea>
+	<input type="submit" name="action" value="Verify">
+	<input type="hidden" name="public_pgp" value="{{public_pgp_key}}">
+</form>

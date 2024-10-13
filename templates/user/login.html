@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Login</title>
+	<style>
+		html {
+			height: 100%;
+			font-family: arial;
+		}
+		body {
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: rgb(20, 20, 20);
+			flex-direction: column;
+			height: 100%;
+		}
+		form {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+		}
+		textarea {
+			resize: none;
+			border: 2px solid rgba(55, 55, 55, 0.3);
+			outline: none;
+			height: 250px;
+			width: 500px;
+		    color: rgba(255, 255, 255, 0.5);
+		    background: rgba(0, 0, 0, 0.3);
+		    border-radius: 5px;
+		    -moz-text-align-last: center;
+		    text-align-last: center;
+		    user-select: auto;
+		    text-align: center;
+		}
+		textarea::placeholder {
+			color: rgba(255, 255, 255, 0.3);
+		}
+		login-area input {
+			background: rgba(0, 0, 0, 0.4);
+			color: rgba(255, 255, 255, 0.6);
+			border-radius: 5px;
+			margin: 5px;
+			padding: 5px;
+			cursor: pointer;
+			border: 1px solid rgba(55, 55, 55, 0.3);
+		}
+		login-area input:hover {
+			background: rgba(0, 0, 0, 0.3);
+			color: rgba(255, 255, 255, 0.4);
+		}
+		login-area input:active {
+			background: rgba(0, 0, 0, 0.2);
+			color: rgba(255, 255, 255, 0.3);
+		}
+
+		login-area {
+			display: flex;
+			flex-direction: row;
+		}
+
+		header {
+			color: rgba(255, 255, 255, 0.5);
+			padding: 10px;
+			background: rgba(10, 10, 10, 0.3);
+			border: 1px solid rgba(55, 55, 55, 0.1);
+			border-radius: 15px;
+			margin: 5px;
+		}
+		::-webkit-scrollbar {
+		  width: 10px;
+		}
+		::-webkit-scrollbar-track {
+		  background: rgba(0, 0, 0, 0.5);
+		  border-radius: 5px;
+		}
+		::-webkit-scrollbar-thumb {
+		  background: rgba(50, 50, 50, 0.5);
+		  border-radius: 5px;
+		}
+		::-webkit-scrollbar-thumb:hover {
+		  background: rgba(50, 50, 50, 0.3);
+		}
+	</style>
+</head>
+<body>
+<form action="/user/login" method="post">
+	<textarea name="public_pgp" placeholder="PGP Public Key"></textarea>
+	<login-area>
+		<input type="submit" name="action" value="Auth">
+	</login-area>
+</form>
+</body>
+</html>

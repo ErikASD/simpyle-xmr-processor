@@ -1,0 +1,13 @@
+<user-nav>
+	<nav-buttons>
+		<a href="/user/deposit" {% if page == "deposit"%}class="active"{%endif%}>Deposit</a>
+		<a href="/user/withdraw" {% if page == "withdraw"%}class="active"{%endif%}>Withdraw</a>
+	</nav-buttons>
+	<filler></filler>
+	<balance>{{"{:,.6f}".format(user.balance/(1000 * 1000 * 1000 * 1000))}}
+		<i-xmr>
+			<svg height="16px" width="16px"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-xmr"></use></svg>
+		</i-xmr>
+	</balance>
+	<a href="/user" class="user-display {% if page == "user"%}active{%endif%}">{{user.display}}</a>
+</user-nav>
