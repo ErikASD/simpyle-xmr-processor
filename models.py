@@ -32,6 +32,7 @@ class User(Base):
         if db_user:
             return db_user
 
+        #propper user sanitation, most advised to allow a-z and 0-9 to prevent evil username exploits
         while User.exists(db, display):
             display += str(random.randint(0, 9))
 
