@@ -71,8 +71,8 @@
 <form action="/user/withdraw" method="post" class="form-withdraw">
 	<result>{{result}}</result>
 	<withdraw-input-area>
-		<input type="text" name="address" placeholder="XMR Address">
-		<input type="number" name="amount" min="0" step="0.0001" max="{{user.balance/(1000 * 1000 * 1000 * 1000)}}" placeholder="Amount">
+		<input type="text" name="address" placeholder="XMR Address" required>
+		<input type="number" name="amount" min="0" step="0.0001" max="{{user.balance/(1000 * 1000 * 1000 * 1000)}}" placeholder="Amount" required>
 	</withdraw-input-area>
 	<login-area>
 		<input type="submit" name="action" value="Withdraw">
