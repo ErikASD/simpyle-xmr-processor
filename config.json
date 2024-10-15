@@ -1,5 +1,5 @@
 {
-	"HOST": "0.0.0.0",
+	"HOST": "127.0.0.1",
 	"PORT": 80,
 	"LIVE_RELOAD": true,
 	"LOGIN_CODE_EXPIRE_TIME": 86400,
