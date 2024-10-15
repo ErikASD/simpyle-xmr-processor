@@ -1,5 +1,5 @@
 # simpyle-xmr-processor
-A simple Monero (XMR) payment proccessor that credits accounts using a pgp login system
+A simple Monero (XMR) payment processor that credits accounts using a pgp login system
 
 
 GnuPG and monero wallet rpc Required:
@@ -11,7 +11,7 @@ Windows: https://gnupg.org/ftp/gcrypt/binary/
 Please notify me if there are any glaring/conceptual security holes
 
 install monero folder
-create wallet only intended for proccessor
+create wallet only intended for processor
 
 Linux: ./monero-wallet-rpc --rpc-bind-port (wallet_rpc_port) --daemon-address (daemon_ip_with_port) --wallet-file (wallet_name) --prompt-for-password --disable-rpc-login
 
