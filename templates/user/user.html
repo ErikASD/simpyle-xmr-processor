@@ -10,10 +10,26 @@
 <body>
 {% include "components/user-nav.html"%}
 <main>
-Logout
-<a href="/user/logout" class="logout">
-	✕
-</a>
+	<user-details>
+	<logout-area>
+		Logout
+		<a href="/user/logout" class="logout">
+			✕
+		</a>
+	</logout-area>
+	<deposits-header>Deposits</deposits-header>
+	<deposits>
+	{% for deposit in user.transactions%}
+	<deposit><t-key>XMR</t-key> {{"{:,.6f}".format(deposit.amount/(1000*1000*1000*1000))}} <t-key>Height</t-key> {{deposit.block_height}} <t-key>Hash</t-key> {{deposit.tx_hash}} <t-key>Unlocked</t-key> {{deposit.unlocked}}</deposit>
+	{% endfor %}
+	</deposits>
+	<withdraws-header>Withdraws</withdraws-header>
+	<withdraws>
+	{% for withdraw in user.withdraw_requests%}
+	<withdraw>{{"{:,.6f}".format(withdraw.amount/(1000*1000*1000*1000))}} XMR <w-fee>Fee {{"{:,.6f}".format(withdraw.fee/(1000*1000*1000*1000))}} XMR</w-fee> Hash {{withdraw.tx_hash}} Success {{withdraw.success}}</withdraw>
+	{% endfor %}
+	</withdraws>
+	</user-details>
 </main>
 </body>
 </html>

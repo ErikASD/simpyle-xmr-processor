@@ -15,10 +15,12 @@ class Withdraw:
 		original_amount = int(float(amount) * NORMALIZER)
 		amount = original_amount
 		deducted = user.balance_deduct(db, original_amount)
+		db_withdraw_request = models.WithdrawRequest.create(db, user, original_amount)
 		if not deducted:
 			return "not enough balance"
 		try:
 			if self.ESTIMATE_LOOP:
+
 				retry_count = 0
 				transfer = xmr_wallet_rpc.transfer_no_relay(amount, address)
 				while not transfer and retry_count < self.ESTIMATE_RETRY_MAX:
@@ -27,27 +29,30 @@ class Withdraw:
 					retry_count += 1
 				
 				if not transfer:
-					user.balance_add(db, original_amount)
+					db_withdraw_request.refund(db)
 					return "unable to estimate transfer"
+
 			else:
+
 				transfer = xmr_wallet_rpc.transfer_no_relay(amount, address)
 				if not transfer:
-					user.balance_add(db, original_amount)
+					db_withdraw_request.refund(db)
 					return "estimate transfer failed"
+
 
 			transfer2 = xmr_wallet_rpc.transfer_no_relay(amount - transfer["fee"], address) #sends adjusted amount with fee, perfect above 0.0002 XMR
 			if not transfer2:
-				user.balance_add(db, original_amount)
+				db_withdraw_request.refund(db)
 				return "transfer failed"
 
 			transfer_final = xmr_wallet_rpc.relay_tx(transfer2["tx_metadata"])
 			if not transfer_final:
-				user.balance_add(db, original_amount)
+				db_withdraw_request.refund(db)
 				return "relay failed"
 		except:
 			#When RPC relay throws an exception and quits before refund.
-			user.balance_add(db, original_amount)
+			db_withdraw_request.refund(db)
 			return "relay failed"
 
-		db_withdraw = models.Transaction.create_withdraw(db, user.xmr_address_index, transfer2["amount"], transfer_final["tx_hash"])
+		db_withdraw_request.succeed(db, transfer2["fee"], transfer_final["tx_hash"])
 		return "transfered"

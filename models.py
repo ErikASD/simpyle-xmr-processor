@@ -25,6 +25,7 @@ class User(Base):
     public_fingerprint = Column(String, unique=True, index=True)
     login_codes = relationship("LoginCode", back_populates="user", order_by='LoginCode.time_created.desc()')
     transactions = relationship("Transaction", back_populates="user", order_by='Transaction.time_created.desc()')
+    withdraw_requests = relationship("WithdrawRequest", back_populates="user", order_by='WithdrawRequest.time_created.desc()')
     time_created = Column(Integer, default=get_current_time)
 
     def create(db, display, public_fingerprint, login_code):
@@ -32,7 +33,6 @@ class User(Base):
         if db_user:
             return db_user
 
-        #propper user sanitation, most advised to allow a-z and 0-9 to prevent evil username exploits
         while User.exists(db, display):
             display += str(random.randint(0, 9))
 
@@ -117,7 +117,6 @@ class Transaction(Base):
     __tablename__ = "transactions"
 
     id = Column(String, primary_key=True, default=get_uuid)
-    deposit = Column(Boolean,  default=True)
     address_index = Column(Integer, ForeignKey("users.xmr_address_index"), index=True)
     user = relationship("User", back_populates="transactions")
     amount = Column(Integer, index=True)
@@ -126,21 +125,6 @@ class Transaction(Base):
     block_height = Column(Integer, index=True)
     credited = Column(Boolean, default=False, index=True)
     time_created = Column(Integer, default=get_current_time)
-
-    def create_withdraw(db, address_index, amount, tx_hash):
-        db_transaction = Transaction(
-            deposit = False,
-            address_index = address_index,
-            amount = amount,
-            tx_hash = tx_hash,
-            block_height = None,
-            unlocked = None,
-            credited = None,
-        )
-        db.add(db_transaction)
-        db.commit()
-        db.refresh(db_transaction)
-        return db_transaction
 
     def bulk_insert(db, transactions):
         for transaction in transactions:
@@ -181,3 +165,37 @@ class Transaction(Base):
             self.unlocked = True
             self.credited = True
             db.commit()
+
+class WithdrawRequest(Base):
+    __tablename__ = "withdraw_requests" #used to monitor withdraws, if one stays unsuccessful for a while, error occured somehow, most likely server restart during withdraw call
+
+    id = Column(String, primary_key=True, default=get_uuid)
+    address_index = Column(Integer, ForeignKey("users.xmr_address_index"), index=True)
+    user = relationship("User", back_populates="withdraw_requests")
+    amount = Column(Integer)
+    fee = Column(Integer, default=None)
+    tx_hash = Column(String, default=None, index=True)
+    success = Column(Boolean, default=False, index=True)
+    refunded = Column(Boolean, default=False, index=True)
+    time_created = Column(Integer, default=get_current_time)
+
+    def create(db, user, amount):
+        db_withdraw_request = WithdrawRequest(
+            address_index = user.xmr_address_index,
+            amount = amount
+        )
+        db.add(db_withdraw_request)
+        db.commit()
+        db.refresh(db_withdraw_request)
+        return db_withdraw_request
+
+    def succeed(self, db, fee, tx_hash):
+        self.success = True
+        self.fee = fee
+        self.tx_hash = tx_hash
+        db.commit()
+
+    def refund(self, db):
+        if not (self.refunded or self.success):
+            self.refunded = True
+            self.user.balance_add(db, self.amount)

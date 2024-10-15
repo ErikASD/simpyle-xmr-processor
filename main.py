@@ -67,7 +67,7 @@ class BackgroundRunner:
 				deposit.check_deposits(self.db)
 			except Exception as e:
 				print(str(e))
-			await asyncio.sleep(10)
+			await asyncio.sleep(config["DEPOSIT_SWEEP_TIME"])
 
 runner = BackgroundRunner()
 
