@@ -17,14 +17,13 @@ Linux: ./monero-wallet-rpc --rpc-bind-port (wallet_rpc_port) --daemon-address (d
 
 Windows: monero-wallet-rpc.exe --rpc-bind-port (wallet_rpc_port) --daemon-address (daemon_ip_with_port) --wallet-file (wallet_name) --prompt-for-password --disable-rpc-login
 
-
-
-
-Loop Estimate: disabled by default
+Loop Estimate: 
+disabled by default
 
 in config.json there is an option to enable a loop estimate that tries to estimate many times. Sadly the wallet RPC does not have an option to calculate fee before transfer.
 
 Regular Estimate:
+
 Sends a transaction with do not relay with requested amount.
 
 fee is deducted and a transaction2 is sent to compensate for the fee.
