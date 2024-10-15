@@ -21,7 +21,6 @@ class Deposit:
 
 	def check_deposits(self, db):
 		#NO SWEEP ARCHITECHTURE, high read/write when many transactions are unspent, best used for hotwallet frequently spending incoming outputs.
-		start_time = time.time()
 		transfers = xmr_wallet_rpc.incoming_transfers([])
 		tx_hashes = []
 		tx_hashes_unlocked = set()
@@ -41,8 +40,6 @@ class Deposit:
 		for transfer in txes_no_credit:
 			if transfer.tx_hash in tx_hashes_unlocked: #o(1) lookup for sets
 				transfer.credit(db)
-
-		print(time.time()-start_time)
 
 	def create_deposit_if_none(self, db, user):
 		if user.xmr_address is None:
