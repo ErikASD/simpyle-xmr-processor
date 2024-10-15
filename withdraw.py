@@ -21,8 +21,7 @@ class Withdraw:
 		retry_count = 0
 		transfer = xmr_wallet_rpc.transfer_no_relay(amount, address)
 		while not transfer and retry_count < self.ESTIMATE_RETRY_MAX:
-			print(amount)
-			amount = int(amount * (1-(self.ESTIMATE_PERCENT_DOWN/100)))
+			amount = int(amount * (1-(self.ESTIMATE_PERCENT_DOWN/100))) #compounds, with default config goes down to 95% untill gives up, only happens in small cases
 			transfer = xmr_wallet_rpc.transfer_no_relay(amount, address)
 			retry_count += 1
 		
