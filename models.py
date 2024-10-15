@@ -23,7 +23,8 @@ class User(Base):
     xmr_address = Column(String, unique=True, index=True)
     xmr_address_index = Column(Integer, unique=True, index=True)
     public_fingerprint = Column(String, unique=True, index=True)
-    login_codes = relationship("LoginCode", back_populates="user", order_by='LoginCode.time_created.asc()')
+    login_codes = relationship("LoginCode", back_populates="user", order_by='LoginCode.time_created.desc()')
+    transactions = relationship("Transaction", back_populates="user", order_by='Transaction.time_created.desc()')
     time_created = Column(Integer, default=get_current_time)
 
     def create(db, display, public_fingerprint, login_code):
@@ -115,36 +116,30 @@ class Transaction(Base):
     __tablename__ = "transactions"
 
     id = Column(String, primary_key=True, default=get_uuid)
-    address_index = Column(Integer, index=True)
+    deposit = Column(Boolean,  default=True)
+    address_index = Column(Integer, ForeignKey("users.xmr_address_index"), index=True)
+    user = relationship("User", back_populates="transactions")
     amount = Column(Integer, index=True)
     tx_hash = Column(String, index=True, unique=True)
     unlocked = Column(Boolean, default=False, index=True)
     block_height = Column(Integer, index=True)
     credited = Column(Boolean, default=False, index=True)
     time_created = Column(Integer, default=get_current_time)
-    ### DEPRECATED ### Bulk insert faster
-    def create_or_update(db, address_index, amount, tx_hash, block_height, unlocked):
-        if not unlocked:
-            db_transaction = Transaction.exists(db, tx_hash)
-            if db_transaction:
-                return None
-        else:
-            db_transaction = Transaction.get_by_tx_hash(db, tx_hash)
-            if db_transaction and not db_transaction.credited:
-                db_transaction.credit(db)
-                db.commit()
-            return None
 
-            return db_transaction
+    def create_withdraw(db, address_index, amount, tx_hash):
         db_transaction = Transaction(
+            deposit = False,
             address_index = address_index,
             amount = amount,
             tx_hash = tx_hash,
-            block_height = block_height,
+            block_height = None,
+            unlocked = None,
+            credited = None,
         )
         db.add(db_transaction)
-        return None
-    ### DEPRECATED ###
+        db.commit()
+        db.refresh(db_transaction)
+        return db_transaction
 
     def bulk_insert(db, transactions):
         for transaction in transactions:
@@ -180,9 +175,8 @@ class Transaction(Base):
 
     def credit(self, db):
         if not self.credited:
-            db_user = self.get_user(db)
-            if db_user:
-                db_user.balance += self.amount
+            if self.user:
+                self.user.balance += self.amount
             self.unlocked = True
             self.credited = True
             db.commit()
