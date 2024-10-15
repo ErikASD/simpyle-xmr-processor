@@ -22,3 +22,8 @@ anyways. Always treat wallets connected to internet as a hot wallet and only sto
 A hot wallet is always vulnerable to server exploits, server host access, and other ways to get on the server. Plan accordingly. 
 
 Always run under reverse proxy/load balancer (nginx).
+
+If you would like to donate to help me develop future monero projects:
+43CY5DS11vpNYQMAFCoVD67eQ9eCq7XiN9gwAnuhbggU5vkW72eu63qTXNaJbDGtMPd3ke7BwXJn7UYHidB6xiKj8jyEzCn
+
+Donation is not mandatory, always open to project requests.
