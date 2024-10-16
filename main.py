@@ -21,7 +21,7 @@ with open('config.json', 'r') as file:
 with open('secrets.json', 'r') as file:
 	server_secrets = json.load(file)
 
-app = FastAPI()
+app = FastAPI(docs_url=None,redoc_url=None,openapi_url=None)#for security all = None
 pgp_login = PGPLogin(server_secrets["CONF_PEPPER"])
 deposit = Deposit()
 withdraw = Withdraw(config)
