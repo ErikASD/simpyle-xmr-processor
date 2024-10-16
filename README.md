@@ -40,7 +40,9 @@ Keeps all outputs in subaddresses and keeps track of them with db with propper c
 
 
 
+Live Reload:
 
+Useful in development. Recommended to turn off during production for less resource usage.
 
 
 RPC is hosted on loopback 127.0.0.1 and any requests from host machine is trusted by wallet rpc. If someone hacks your server, rpc login does not protect much as login is stored on server 
