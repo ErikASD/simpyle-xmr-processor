@@ -53,4 +53,4 @@ Always run under reverse proxy/load balancer (nginx).
 
 If you would like to donate to help me develop future monero projects:
 
-monero:43CY5DS11vpNYQMAFCoVD67eQ9eCq7XiN9gwAnuhbggU5vkW72eu63qTXNaJbDGtMPd3ke7BwXJn7UYHidB6xiKj8jyEzCn
+monero:84wPRTvp1NVMHmgXBoYHd29Q3s7TNC48CWP3kqQHzdofKmy2XSbdNvaCZd1HevB9T77o4ZaAC65DFgckZzL9NfGeV8mKLfm
