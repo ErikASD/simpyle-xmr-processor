@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 import models
 from database import SessionLocal, engine
@@ -21,12 +21,14 @@ with open('config.json', 'r') as file:
 with open('secrets.json', 'r') as file:
 	server_secrets = json.load(file)
 
-app = FastAPI(docs_url=None,redoc_url=None,openapi_url=None)#for security all = None
+app = FastAPI()
 pgp_login = PGPLogin(server_secrets["CONF_PEPPER"])
 deposit = Deposit()
 withdraw = Withdraw(config)
 
 template = Jinja2Templates(directory="templates").TemplateResponse
+
+NORMALIZER = 1000 * 1000 * 1000 * 1000
 
 def get_db():
 	db = SessionLocal()
@@ -63,7 +65,6 @@ class BackgroundRunner:
 	async def run_check_deposits(self):
 		while True:
 			try:
-				print("checking deposits")
 				deposit.check_deposits(self.db)
 			except Exception as e:
 				print(str(e))
@@ -167,7 +168,8 @@ async def path_user_withdraw(request: Request, result: str = "", db: Session = D
 	return template(request=request, name="user/withdraw.html", context={"user":user,"page":"withdraw","result":base64.b64decode(result.encode()).decode()})
 
 @app.post("/user/withdraw")
-async def path_user_withdraw_post(request: Request, db: Session = Depends(get_db)):
+async def path_user_withdraw_post(request: Request, background_tasks: BackgroundTasks):
+	db = next(get_db()) #fixes issues with background tasks
 	user = get_user(db, request)
 	if not user:
 		return RedirectResponse("/user/login", status_code=302)
@@ -178,7 +180,14 @@ async def path_user_withdraw_post(request: Request, db: Session = Depends(get_db
 	if float(amount) < 0.0001:
 		transfer_final = 'amount has to be greater than 0.0001'
 	else:
-		transfer_final = withdraw.request_withdraw(db, user, amount, address)
+		original_amount = int(float(amount) * NORMALIZER)
+		db_withdraw_request = models.WithdrawRequest.create(db, user, original_amount)
+		if db_withdraw_request:
+			background_tasks.add_task(withdraw.request_withdraw, db, db_withdraw_request, address)
+			transfer_final = 'transfer requested'
+		else:
+			transfer_final = 'not enough balance'
+
 	return RedirectResponse(f"/user/withdraw?result={base64.b64encode(transfer_final.encode()).decode()}", status_code=302)
 
 if __name__ == "__main__":

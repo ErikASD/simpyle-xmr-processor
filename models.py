@@ -66,9 +66,10 @@ class User(Base):
         return user
 
     def balance_deduct(self, db, amount):
-        if (self.balance - amount) < 0:
+        new_bal = self.balance - amount
+        if (new_bal) < 0:
             return False
-        self.balance -= amount
+        self.balance = new_bal
         db.commit()
         return True
 
@@ -161,7 +162,8 @@ class Transaction(Base):
     def credit(self, db):
         if not self.credited:
             if self.user:
-                self.user.balance += self.amount
+                self.user.balance_add(db, self.amount)
+                print(f"{self.amount} credited to {self.user.display}")
             self.unlocked = True
             self.credited = True
             db.commit()
@@ -173,29 +175,38 @@ class WithdrawRequest(Base):
     address_index = Column(Integer, ForeignKey("users.xmr_address_index"), index=True)
     user = relationship("User", back_populates="withdraw_requests")
     amount = Column(Integer)
-    fee = Column(Integer, default=None)
+    fee = Column(Integer, default=0)
     tx_hash = Column(String, default=None, index=True)
     success = Column(Boolean, default=False, index=True)
     refunded = Column(Boolean, default=False, index=True)
+    status = Column(String, default="initiated")
     time_created = Column(Integer, default=get_current_time)
 
     def create(db, user, amount):
-        db_withdraw_request = WithdrawRequest(
-            address_index = user.xmr_address_index,
-            amount = amount
-        )
-        db.add(db_withdraw_request)
-        db.commit()
-        db.refresh(db_withdraw_request)
-        return db_withdraw_request
+        deducted = user.balance_deduct(db, amount)
+        if deducted:
+            db_withdraw_request = WithdrawRequest(
+                address_index = user.xmr_address_index,
+                amount = amount
+            )
+            db.add(db_withdraw_request)
+            db.commit()
+            db.refresh(db_withdraw_request)
+            print(f"{user.display} created withdraw request")
+            return db_withdraw_request
+        return None
 
     def succeed(self, db, fee, tx_hash):
         self.success = True
         self.fee = fee
         self.tx_hash = tx_hash
+        self.status = "sent"
         db.commit()
+        print(f"{self.user.display}'s withdraw request succeeded")
 
     def refund(self, db):
         if not (self.refunded or self.success):
             self.refunded = True
+            self.status = "refunded"
             self.user.balance_add(db, self.amount)
+        print(f"{self.user.display}'s withdraw request failed, user refunded")

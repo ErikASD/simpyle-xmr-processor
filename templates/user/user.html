@@ -26,7 +26,7 @@
 	<withdraws-header>Withdraws</withdraws-header>
 	<withdraws>
 	{% for withdraw in user.withdraw_requests%}
-	<withdraw><t-key>XMR</t-key> {{"{:,.6f}".format(withdraw.amount/(1000*1000*1000*1000))}} <w-fee><t-key>Fee</t-key> {{"{:,.6f}".format(withdraw.fee/(1000*1000*1000*1000))}} XMR</w-fee> <t-key>Hash</t-key> {{withdraw.tx_hash}} <t-key>Success</t-key> {{withdraw.success}}</withdraw>
+	<withdraw><t-key>XMR</t-key> {{"{:,.6f}".format(withdraw.amount/(1000*1000*1000*1000))}} <w-fee><t-key>Fee</t-key> {{"{:,.6f}".format(withdraw.fee/(1000*1000*1000*1000))}} XMR</w-fee> <t-key>Hash</t-key> {{withdraw.tx_hash}} <t-key>Status</t-key> {{withdraw.status}}</withdraw>
 	{% endfor %}
 	</withdraws>
 	</user-details>

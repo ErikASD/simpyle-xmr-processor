@@ -1,5 +1,6 @@
 from xmr_wallet_rpc import XMRWalletRPC
 import models
+import requests
 
 xmr_wallet_rpc = XMRWalletRPC()
 
@@ -11,13 +12,9 @@ class Withdraw:
 		self.ESTIMATE_RETRY_MAX = config["ESTIMATE_RETRY_MAX"]
 		self.ESTIMATE_PERCENT_DOWN = config["ESTIMATE_PERCENT_DOWN"]
 
-	def request_withdraw(self, db, user, amount, address):
-		original_amount = int(float(amount) * NORMALIZER)
-		amount = original_amount
-		deducted = user.balance_deduct(db, original_amount)
-		db_withdraw_request = models.WithdrawRequest.create(db, user, original_amount)
-		if not deducted:
-			return "not enough balance"
+	def request_withdraw(self, db, db_withdraw_request, address):
+		amount = db_withdraw_request.amount
+
 		try:
 			if self.ESTIMATE_LOOP:
 
@@ -49,8 +46,8 @@ class Withdraw:
 			if not transfer_final:
 				db_withdraw_request.refund(db)
 				return "relay failed"
-		except:
-			#When RPC relay throws an exception and quits before refund.
+		except requests.exceptions.RequestException:
+			#When RPC relay throws a request exception and quits before refund.
 			db_withdraw_request.refund(db)
 			return "relay failed"
 
