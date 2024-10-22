@@ -128,8 +128,6 @@ class Transaction(Base):
     time_created = Column(Integer, default=get_current_time)
 
     def bulk_insert(db, transactions):
-        for transaction in transactions:
-            transaction["address_index"] = transaction["subaddr_index"]["minor"]
         db.execute(insert(Transaction).prefix_with("OR IGNORE"),transactions)
         db.commit()
 
