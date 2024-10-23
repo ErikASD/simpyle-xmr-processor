@@ -9,7 +9,7 @@ xmr_wallet_rpc = XMRWalletRPC()
 
 class Deposit:
 	def __init__(self):
-		self.last_height = 0
+		pass
 
 	def get_qr_svg(self, address):
 		qr = qrcode.QRCode(image_factory=qrcode.image.svg.SvgPathImage, box_size=10,border=0)
