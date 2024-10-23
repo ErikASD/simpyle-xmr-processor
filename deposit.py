@@ -38,9 +38,9 @@ class Deposit:
 
 		#credits all pending transactions in db that are unlocked
 		txes_no_credit = models.Transaction.get_by_tx_hashes_no_credit(db, tx_hashes)
-		for transfer in txes_no_credit:
-			if transfer.tx_hash in tx_hashes_unlocked: #o(1) lookup for sets
-				transfer.credit(db)
+		for transaction in txes_no_credit:
+			if transaction.tx_hash in tx_hashes_unlocked: #o(1) lookup for sets
+				transaction.credit(db)
 
 	def create_deposit_if_none(self, db, user):
 		if user.xmr_address is None:
