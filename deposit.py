@@ -37,7 +37,7 @@ class Deposit:
 		models.Transaction.bulk_insert(db, transfers)
 
 		#credits all pending transactions in db that are unlocked
-		txes_no_credit = models.Transaction.get_by_tx_hashes_no_credit(db, tx_hashes)
+		txes_no_credit = models.Transaction.get_by_no_credit(db)
 		for transaction in txes_no_credit:
 			if transaction.tx_hash in tx_hashes_unlocked: #o(1) lookup for sets
 				transaction.credit(db)
