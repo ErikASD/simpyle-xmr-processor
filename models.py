@@ -163,11 +163,11 @@ class Transaction(Base):
 
     def credit(self, db):
         if not self.credited:
+            self.unlocked = True
+            self.credited = True
             if self.user:
                 self.user.balance_add(db, self.amount)
                 print(f"{self.amount} credited to {self.user.display}")
-            self.unlocked = True
-            self.credited = True
             db.commit()
 
 class WithdrawRequest(Base):
