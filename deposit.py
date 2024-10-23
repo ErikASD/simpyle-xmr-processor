@@ -26,10 +26,10 @@ class Deposit:
 		tx_hashes_unlocked = set()
 
 		for transfer in transfers:
+			transfer["address_index"] = transfer["subaddr_index"]["minor"]
 			if transfer["subaddr_index"]["minor"] == 0:
 				continue
 			tx_hashes.append(transfer["tx_hash"])
-			transfer["address_index"] = transfer["subaddr_index"]["minor"]
 			if transfer["unlocked"]:
 				tx_hashes_unlocked.add(transfer["tx_hash"])
 
