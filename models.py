@@ -149,6 +149,10 @@ class Transaction(Base):
         db_transaction = db.query(Transaction).filter(Transaction.credited == False).filter(or_(*filter_arg)).all()
         return db_transaction
 
+    def get_by_no_credit(db):
+        db_transactions = db.query(Transaction).filter(Transaction.credited == False).all()
+        return db_transactions
+
     def exists(db, tx_hash):
         exist = db.scalar(exists().where(Transaction.tx_hash == tx_hash).select())
         return exist
